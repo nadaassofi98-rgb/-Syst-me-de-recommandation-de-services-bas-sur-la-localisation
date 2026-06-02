@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Smart Morocco AI Recommender</title>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+
+<style>
+body { margin:0; font-family:Arial; }
+#map { height:100vh; }
+
+.panel {
+    position:absolute;
+    top:10px;
+    left:10px;
+    width:270px;
+    background:white;
+    padding:15px;
+    border-radius:10px;
+    z-index:1000;
+    box-shadow:0 5px 15px rgba(0,0,0,0.2);
+}
+
+select, button {
+    width:100%;
+    padding:8px;
+    margin-top:10px;
+}
+
+button {
+    background:#2c7be5;
+    color:white;
+    border:none;
+    cursor:pointer;
+}
+
+.card {
+    background:#eef3ff;
+    margin-top:5px;
+    padding:6px;
+    border-radius:6px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="panel">
+    <h3>📍 Smart Recommender</h3>
+
+    <button onclick="useGPS()">📍 Activer GPS</button>
+
+    <label>Service</label>
+    <select id="type">
+        <option value="restaurant">Restaurant</option>
+        <option value="cafe">Café</option>
+        <option value="pharmacy">Pharmacie</option>
+        <option value="atm">ATM</option>
+        <option value="supermarket">Supermarket</option>
+    </select>
+
+    <button onclick="getRecommendations()">🎯 Recommander</button>
+
+    <div id="result"></div>
+</div>
+
+<div id="map"></div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
+
+var map = L.map('map').setView([31.8, -7.1], 6);
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+var layer = L.layerGroup().addTo(map);
+
+let userLat = null;
+let userLon = null;
+
+// =========================
+// GPS
+// =========================
+function useGPS() {
+    navigator.geolocation.getCurrentPosition(pos => {
+
+        userLat = pos.coords.latitude;
+        userLon = pos.coords.longitude;
+
+        map.setView([userLat, userLon], 13);
+
+        L.marker([userLat, userLon])
+            .addTo(map)
+            .bindPopup("📍 Vous êtes ici")
+            .openPopup();
+    },
+    err => {
+        alert("Erreur GPS");
+    });
+}
+
+// =========================
+// RECOMMENDATIONS
+// =========================
+function getRecommendations() {
+
+    let type = document.getElementById("type").value;
+
+    // =========================
+    // PROTECTION NULL
+    // =========================
+    if (!userLat || !userLon) {
+        alert("⚠️ Activez d'abord votre position GPS");
+        return;
+    }
+
+    fetch(`/recommend?lat=${userLat}&lon=${userLon}&type=${type}`)
+    .then(res => res.json())
+    .then(data => {
+
+        if (!data || data.length === 0 || data.error) {
+            alert("Aucun résultat");
+            return;
+        }
+
+        layer.clearLayers();
+        document.getElementById("result").innerHTML = "<h4>🏆 Top 3</h4>";
+
+        data.forEach((item, i) => {
+
+            L.marker([item.lat, item.lon])
+            .addTo(layer)
+            .bindPopup(`<b>${item.name}</b>`);
+
+            document.getElementById("result").innerHTML += `
+                <div class="card">
+                    <b>#${i+1} ${item.name}</b><br>
+                    📍 ${item.distance ? item.distance.toFixed(2) : 0} km
+                </div>
+            `;
+        });
+
+        map.setView([data[0].lat, data[0].lon], 13);
+    })
+    .catch(err => {
+        console.error(err);
+        alert("Erreur API serveur");
+    });
+}
+
+</script>
+
+</body>
+</html>

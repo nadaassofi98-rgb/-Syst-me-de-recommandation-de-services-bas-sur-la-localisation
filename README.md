@@ -26,6 +26,7 @@ Ce projet utilise des techniques d’intelligence artificielle pour suggérer le
       Pickle (sauvegarde du modèle)
       
 📂 Structure du projet
+
       project/
       │
       ├── API_Proches_Services.ipynb         # API Flask

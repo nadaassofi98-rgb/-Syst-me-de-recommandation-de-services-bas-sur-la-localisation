@@ -3,18 +3,21 @@
 Un système intelligent de recommandation de services basé sur la localisation géographique.
 Ce projet utilise des techniques d’intelligence artificielle pour suggérer les services les plus proches et pertinents selon la position de l’utilisateur.
 
+
 🚀 Fonctionnalités
     📌 Recommandation de services proches
     📍 Basé sur la géolocalisation (latitude / longitude)
     🤖 Modèle de recommandation personnalisé
     🌐 API REST avec Flask
     💡 Intégration d'une interface web
+    
 🧠 Technologies utilisées
       Python
       Flask
       Pandas / NumPy
       Scikit-learn
       Pickle (sauvegarde du modèle)
+      
 📂 Structure du projet
       project/
       │

@@ -33,6 +33,6 @@ Ce projet utilise des techniques d’intelligence artificielle pour suggérer le
       ├── recommender_model.ipynb            # Classe du modèle
       ├── recommender_services_model.pkl     # Modèle entraîné
       ├── Proches_Services_Entrainement.py   # Script d'entraînement
-      ├── templates/                         # HTML (optionnel)
-        ├── API_Proches_Services.html        # CSS / JS (optionnel)
+      ├── templates/                         # HTML / CSS / JS 
+        ├── API_Proches_Services.html        #
       └── README.md
